@@ -1,0 +1,45 @@
+---
+title: Types
+---
+
+# Types
+
+Each of the types contains reference to other type. It representes how data is stored in mongodb.
+
+i did't liked the embedded documents style (cause it will quickly become redundant), so it uses references which you can learn more about [here](https://docs.mongodb.com/manual/applications/data-models-relationships/).
+
+## Quote
+
+```graphql
+type Quote {
+  quote: String!
+  show: Show!
+  character: Character!
+}
+```
+
+## Show
+
+```graphql
+type Show {
+  title: String!
+  type: Type!
+}
+```
+
+## Character
+
+```graphql
+type Character {
+  name: String!
+  show: Show!
+}
+```
+
+## Type
+
+```graphql
+type Type {
+  name: String!
+}
+```

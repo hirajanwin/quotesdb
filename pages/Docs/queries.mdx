@@ -1,0 +1,214 @@
+---
+title: Queries
+---
+
+# Queries
+
+## Table of Contents
+
+1. [quotes](#quotes)
+2. [randomQuotes](#randomQuotes)
+3. [characters](#characters)
+4. [shows](#shows)
+
+<h2 id="quotes">quotes</h2>
+
+This is the main query of all you can filter out quotes by show name or character name which you can get from other queries.
+
+```
+quotes(offset: Int, limit: Int, show: String, character: String): [Quote!]!
+```
+
+| Variables | Default |
+| --------- | ------- |
+| offset    | 0       |
+| limit     | 10      |
+| show      | null    |
+| character | null    |
+
+(All variables are optional)
+
+#### Sample Query :
+
+```graphql
+query Query {
+  quotes {
+    quote
+    character {
+      name
+    }
+    show {
+      title
+      type {
+        name
+      }
+    }
+  }
+}
+```
+
+#### Sample Output :
+
+```
+{
+  "data": {
+    "quotes": [
+      {
+        "quote": "“...”",
+        "character": {
+          "name": "..."
+        },
+        "show": {
+          "title": "...",
+          "type": {
+            "name": "..."
+          }
+        }
+      },
+    ...
+      ]
+   }
+}
+```
+
+<h2 id="randomQuotes">randomQuotes</h2>
+
+Get quotes in random order.
+
+```
+randomQuotes(count: Int): [Quote]!
+```
+
+| Variables | Default |
+| --------- | ------- |
+| count     | 1       |
+
+(count represents total number of random quotes you want)
+
+#### Sample Query :
+
+```graphql
+query Query($count: Int) {
+  randomQuotes(count: $count) {
+    quote
+    character {
+      name
+    }
+  }
+}
+```
+
+#### Sample Output :
+
+```graphql
+{
+  "data": {
+    "randomQuotes": [
+      {
+        "quote": "“...",
+        "character": {
+          "name": "..."
+        }
+      },
+    ...
+    ]
+  }
+}
+```
+
+<h2 id="characters">characters</h2>
+
+Get all the characters filterable by show.
+
+```
+characters(show: String): [Character!]!
+```
+
+| Variables | Default |
+| --------- | ------- |
+| show      | null    |
+
+(All variables are optional)
+
+#### Sample Query :
+
+```graphql
+query Query {
+  characters {
+    name
+    show {
+      title
+      type {
+        name
+      }
+    }
+  }
+}
+```
+
+#### Sample Output :
+
+```graphql
+{
+  "data": {
+    "characters": [
+      {
+        "name": "...",
+        "show": {
+          "title": "...",
+          "type": {
+            "name": "..."
+          }
+        }
+      },
+      ...
+    ]
+  }
+}
+```
+
+<h2 id="shows">shows</h2>
+
+Get all the shows
+
+```
+shows(offset: Int, limit: Int): [Show!]!
+```
+
+| Variables | Default |
+| --------- | ------- |
+| offset    | 0       |
+| limit     | 10      |
+
+(All variables are optional)
+
+#### Sample Query :
+
+```
+query Query {
+ shows {
+   title
+   type {
+     name
+   }
+ }
+}
+```
+
+#### Sample Output :
+
+```
+{
+  "data": {
+    "shows": [
+      {
+        "title": "...",
+        "type": {
+          "name": "..."
+        }
+      }
+    ],
+    ...
+  }
+}
+```
