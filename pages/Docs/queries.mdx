@@ -10,10 +10,12 @@ title: Queries
 2. [randomQuotes](#randomQuotes)
 3. [characters](#characters)
 4. [shows](#shows)
+5. [types](#types)
 
 <h2 id="quotes">quotes</h2>
 
-This is the main query of all you can filter out quotes by show name or character name which you can get from other queries.
+You can filter out quotes by show name or character name which you can get from other
+queries.
 
 ```
 quotes(offset: Int, limit: Int, show: String, character: String): [Quote!]!
@@ -169,7 +171,7 @@ query Query {
 
 <h2 id="shows">shows</h2>
 
-Get all the shows
+Get all the shows filterable by type.
 
 ```
 shows(offset: Int, limit: Int): [Show!]!
@@ -206,6 +208,35 @@ query Query {
         "type": {
           "name": "..."
         }
+      }
+    ],
+    ...
+  }
+}
+```
+
+<h2 id="types">types</h2>
+
+Get all the types available for shows.
+
+Sample Query :
+
+```
+query Query{
+  types {
+    name
+  }
+}
+```
+
+Sample Output :
+
+```
+{
+  "data": {
+    "types": [
+      {
+        "name": "..."
       }
     ],
     ...

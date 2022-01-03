@@ -1,12 +1,21 @@
-import { ApolloServer, gql } from 'apollo-server-micro'
+import { ApolloError, ApolloServer, gql } from 'apollo-server-micro'
 import db from '../../db/middleware'
+import { makeExecutableSchema } from '@graphql-tools/schema'
+import { applyMiddleware } from 'graphql-middleware'
+import rateLimit from '../../utils/rate-limit'
+
+const limiter = rateLimit({
+  interval: 60 * 1000,
+  uniqueTokenPerInterval: 500,
+})
 
 const typeDefs = gql`
   type Query {
     quotes(offset: Int, limit: Int, show: String, character: String): [Quote!]!
     characters(show: String): [Character!]!
-    shows(offset: Int, limit: Int): [Show!]!
+    shows(offset: Int, limit: Int, type: String): [Show!]!
     randomQuotes(count: Int): [Quote]!
+    types: [Type!]!
   }
 
   type Quote {
@@ -73,8 +82,14 @@ const resolvers = {
     },
     async shows(parent, args, ctx) {
       const db = await ctx.db
-      const { limit, offset } = args
-      return await db.Shows.find({}, { __v: false })
+      const { limit, offset, type } = args
+
+      let typeId
+      if (type) {
+        typeId = (await db.Types.findOne({ name: type }, { _id: true }))?.id
+      }
+
+      return await db.Shows.find(type ? { type: typeId } : {}, { __v: false })
         .skip(offset || 0)
         .limit(limit || 10)
     },
@@ -82,6 +97,10 @@ const resolvers = {
       const db = await ctx.db
       const { count } = args
       return await db.Quotes.aggregate([{ $sample: { size: count || 1 } }])
+    },
+    async types(parent, args, ctx) {
+      const db = await ctx.db
+      return await db.Types.find({}, { __v: false })
     },
   },
   Quote: {
@@ -108,10 +127,36 @@ const resolvers = {
   },
 }
 
+const middleware = async (resolve, root, args, ctx, info) => {
+  try {
+    await limiter.check(ctx.res, 11, ctx.req.connection.remoteAddress)
+    return await resolve(root, args, ctx, info)
+  } catch {
+    throw new ApolloError('Limit Reached!')
+  }
+}
+
+const schema = makeExecutableSchema({ typeDefs, resolvers })
+
+const schemaWithMiddleware = applyMiddleware(schema, {
+  Query: {
+    randomQuotes: middleware,
+    quotes: middleware,
+    characters: middleware,
+    shows: middleware,
+    randomQuotes: middleware,
+    types: middleware,
+  },
+})
+
 const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
-  context: { db: db() },
+  context: ({ req, res }) => ({ req, res, db: db() }),
+  schema: schemaWithMiddleware,
+  formatError: (err) => {
+    return { message: err.message }
+  },
 })
 
 const startServer = apolloServer.start()

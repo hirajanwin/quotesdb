@@ -1,11 +1,11 @@
 export default {
-  github: 'http://github.com',
-  docsRepositoryBase: null, // base URL for the docs repository
+  github: 'https://github.com/solvencino/quotesdb',
+  docsRepositoryBase: null,
   titleSuffix: ' - QuotesDB',
   nextLinks: true,
   prevLinks: true,
   search: false,
-  customSearch: null, // customizable, you can use algolia for example
+  customSearch: null,
   darkMode: true,
   footer: true,
   floatTOC: false,
@@ -24,8 +24,14 @@ export default {
   head: (
     <>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta name="description" content="Nextra: the next docs builder" />
-      <meta name="og:title" content="Nextra: the next docs builder" />
+      <meta
+        name="description"
+        content="QuotesDB is a place to collect words that inspired you."
+      />
+      <meta
+        name="og:title"
+        content="QuotesDB is a place to collect words that inspired you."
+      />
     </>
   ),
 }
