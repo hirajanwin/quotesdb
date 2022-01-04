@@ -3,6 +3,7 @@ title: Home
 ---
 
 import Image from 'next/image'
+import connectDB from '../db/connectDB'
 
 # <center style={{marginTop:'50px',marginBottom:'50px'}}>QuotesDB</center>
 
@@ -19,3 +20,17 @@ import Image from 'next/image'
 - [`ApolloStudio`](https://studio.apollographql.com/sandbox/explorer?endpoint=https%3A%2F%2Fquotesdb.vercel.app%2Fapi%2Fgraphql)
 
 - [`PlayGround`](/api/playground)
+
+<h4>
+  We have collected {props.quotes} quotes from {props.shows} Shows So Far ✨
+</h4>
+
+_Rate Limit : 1req / 2sec_
+
+export async function getStaticProps() {
+  const db = await connectDB()
+  const shows = await db.Shows.find().estimatedDocumentCount()
+  const quotes = await db.Quotes.find().estimatedDocumentCount()
+
+return { props: { shows, quotes }, revalidate: 3600 }
+}

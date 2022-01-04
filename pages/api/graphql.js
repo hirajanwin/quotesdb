@@ -1,11 +1,11 @@
 import { ApolloError, ApolloServer, gql } from 'apollo-server-micro'
-import db from '../../db/middleware'
+import db from '../../db/connectDB'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import { applyMiddleware } from 'graphql-middleware'
 import rateLimit from '../../utils/rate-limit'
 
 const limiter = rateLimit({
-  interval: 60 * 1000,
+  interval: 2000,
   uniqueTokenPerInterval: 500,
 })
 
@@ -129,7 +129,7 @@ const resolvers = {
 
 const middleware = async (resolve, root, args, ctx, info) => {
   try {
-    await limiter.check(ctx.res, 11, ctx.req.connection.remoteAddress)
+    await limiter.check(ctx.res, 2, ctx.req.connection.remoteAddress)
     return await resolve(root, args, ctx, info)
   } catch {
     throw new ApolloError('Limit Reached!')
