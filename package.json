@@ -11,9 +11,11 @@
   "dependencies": {
     "@graphql-tools/schema": "^8.3.1",
     "apollo-server-micro": "^3.5.0",
+    "graphql": "^16.2.0",
     "graphql-middleware": "^6.1.13",
     "graphql-playground-middleware-express": "^1.7.23",
     "lru-cache": "^6.0.0",
+    "micro": "^9.3.4",
     "mongoose": "^6.1.2",
     "next": "12.0.7",
     "nextra": "^1.1.0",
