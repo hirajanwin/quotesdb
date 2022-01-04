@@ -157,6 +157,7 @@ const apolloServer = new ApolloServer({
   formatError: (err) => {
     return { message: err.message }
   },
+  introspection: true,
 })
 
 const startServer = apolloServer.start()
